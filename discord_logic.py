@@ -241,7 +241,7 @@ async def profile(ctx, player_menu_ui: discord.ui.View) -> None:
     :return: None
     """
 
-    no_error, msgs = interface.show_player_profile(ctx.author.name)
+    no_error, msgs = interface.show_player_profile(interaction.user.name)
     if no_error:
         player_inst = data_management.search_cache_player(ctx.author.name)
         job_inst = data_management.search_cache_job_by_name(player_inst.current_job)

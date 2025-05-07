@@ -172,14 +172,14 @@ class ToinCossMenu(discord.ui.View):
     @discord.ui.button(label="Heads", style=discord.ButtonStyle.red)
     async def menu1(self, interaction: discord.Interaction, button: discord.ui.Button):
         if await check_button_pressed_by_certain_name(self.ctx, interaction, self.dueled_player):
-            await discord_logic.begin_pvp_fight(self.ctx, ActionMenu(self.ctx), self.ctx.author, self.dueled_player, "HEADS")
+            await discord_logic.begin_pvp_fight(interaction, ActionMenu(interaction), interaction.user, self.dueled_player, "HEADS")
             await interaction.response.defer()
 
     # Fight
     @discord.ui.button(label="Tails", style=discord.ButtonStyle.red)
     async def menu2(self, interaction: discord.Interaction, button: discord.ui.Button):
         if await check_button_pressed_by_certain_name(self.ctx, interaction, self.dueled_player):
-            await discord_logic.begin_pvp_fight(self.ctx, ActionMenu(self.ctx), self.ctx.author, self.dueled_player, "TAILS")
+            await discord_logic.begin_pvp_fight(interaction, ActionMenu(interaction), interaction.user, self.dueled_player, "TAILS")
             await interaction.response.defer()
 
 
@@ -211,11 +211,11 @@ class ItemBuySelect(discord.ui.Select):
         if await check_button_pressed(self.ctx, interaction):
             item = data_management.search_cache_item_by_name(self.values[0])
             # Buys the item
-            no_error, msgs = interface.buy_item(self.ctx.author.name, item.name)
+            no_error, msgs = interface.buy_item(interaction.user.name, item.name)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class ItemBuySelectView(discord.ui.View):
@@ -249,11 +249,11 @@ class ItemDestroySelect(discord.ui.Select):
         if await check_button_pressed(self.ctx, interaction):
             item = data_management.search_cache_item_by_name(self.values[0])
             # Destroys the item
-            no_error, msgs = interface.destroy_item_for_essence(self.ctx.author.name, item.name)
+            no_error, msgs = interface.destroy_item_for_essence(interaction.user.name, item.name)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 class ItemDestroySelectView(discord.ui.View):
     def __init__(self, ctx, item_list):

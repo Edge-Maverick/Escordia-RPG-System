@@ -404,11 +404,11 @@ class AreaSelect(discord.ui.Select):
         if await check_button_pressed(self.ctx, interaction):
             area = data_management.search_cache_area_by_name(self.values[0])
             # Travel
-            no_error, msgs = interface.travel_to_area(self.ctx.author.name, area.number)
+            no_error, msgs = interface.travel_to_area(interaction.user.name, area.number)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class AreaSelectView(discord.ui.View):
@@ -439,15 +439,15 @@ class DungeonSelect(discord.ui.Select):
 
         if await check_button_pressed(self.ctx, interaction):
             dungeon = data_management.search_cache_dungeon_by_name(self.values[0])
-            no_error, msgs = interface.start_dungeon(self.ctx.author.name, dungeon.dungeon_name)
+            no_error, msgs = interface.start_dungeon(interaction.user.name, dungeon.dungeon_name)
             # Battles
             if no_error:
-                if data_management.search_cache_player(self.ctx.author.name).in_dungeon:
-                    no_error, msgs = interface.begin_battle(self.ctx.author.name, False, enemy=random.choice(dungeon.enemy_list))
-                    await discord_logic.manage_battle(self.ctx, no_error, msgs, ActionMenu(self.ctx))
+                if data_management.search_cache_player(interaction.user.name).in_dungeon:
+                    no_error, msgs = interface.begin_battle(interaction.user.name, False, enemy=random.choice(dungeon.enemy_list))
+                    await discord_logic.manage_battle(interaction, no_error, msgs, ActionMenu(interaction))
                     await interaction.response.defer()
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class DungeonSelectView(discord.ui.View):

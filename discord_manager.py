@@ -6,172 +6,93 @@ import discord_logic
 import discord_ui
 import info_msgs
 
+from discord import app_commands
 from discord.ext import commands
 
-# Discord token from VENV
+# Discord token from environment
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 
 # Bot initialization
 intents = discord.Intents.all()
-activity = discord.Activity(type=discord.ActivityType.watching, name="!start")
-bot = commands.Bot(command_prefix='!', intents=intents, activity=activity)
-bot.remove_command('help')
+activity = discord.Activity(type=discord.ActivityType.watching, name="/start")
+bot = commands.Bot(command_prefix='/', intents=intents, activity=activity)
 
-# Discord Commands
-@bot.command()
-async def start(ctx):
-    '''
-    !start command
-    Creates a new character
-    '''
-    await discord_logic.create_character(ctx)
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+    try:
+        synced = await bot.tree.sync()
+        print(f"Synced {len(synced)} command(s)")
+    except Exception as e:
+        print(e)
 
+@bot.tree.command(name="start", description="Creates a new character")
+async def start(interaction: discord.Interaction):
+    await discord_logic.create_character(interaction)
 
-@bot.command()
-async def help(ctx):
-    '''
-    !help command
-    Shows all commands
-    '''
-    await ctx.send(embed=discord_embeds.embed_help_msg(ctx))
+@bot.tree.command(name="help", description="Shows all commands")
+async def help(interaction: discord.Interaction):
+    await interaction.response.send_message(embed=discord_embeds.embed_help_msg(interaction))
 
+@bot.tree.command(name="tutorial", description="Shows the tutorial")
+async def tutorial(interaction: discord.Interaction):
+    await interaction.response.send_message(f"{interaction.user.mention} - {info_msgs.TUTORIAL_MSG}")
 
-@bot.command()
-async def tutorial(ctx):
-    '''
-    !help command
-    Shows all commands
-    '''
-    await ctx.send(f"{ctx.author.mention} - {info_msgs.TUTORIAL_MSG}")
+@bot.tree.command(name="fight", description="Makes the player fight a random enemy from current area")
+async def fight(interaction: discord.Interaction):
+    await discord_logic.begin_fight(interaction, discord_ui.ActionMenu(interaction))
 
+@bot.tree.command(name="boss", description="Makes the player fight the boss of current area")
+async def boss(interaction: discord.Interaction):
+    await discord_logic.begin_boss_fight(interaction, discord_ui.ActionMenu(interaction))
 
-@bot.command()
-async def fight(ctx):
-    '''
-    !fight command
-    Makes the player fight a random enemy from current area
-    '''
-    await discord_logic.begin_fight(ctx, discord_ui.ActionMenu(ctx))
+@bot.tree.command(name="attack", description="Attack enemy fighting the player")
+async def attack(interaction: discord.Interaction):
+    await discord_logic.attack(interaction)
 
+@bot.tree.command(name="rest", description="Fully recovers the player")
+async def rest(interaction: discord.Interaction):
+    await discord_logic.rest(interaction)
 
-@bot.command()
-async def boss(ctx):
-    '''
-    !boss command
-    Makes the player fight the boss of current area
-    '''
-    await discord_logic.begin_boss_fight(ctx, discord_ui.ActionMenu(ctx))
+@bot.tree.command(name="inventory", description="Shows player's inventory")
+async def inventory(interaction: discord.Interaction):
+    await discord_logic.inventory(interaction)
 
+@bot.tree.command(name="profile", description="Shows player's profile")
+async def profile(interaction: discord.Interaction):
+    await discord_logic.profile(interaction, None)
 
-@bot.command()
-async def attack(ctx):
-    '''
-    !attack command
-    Attack enemy fighting the player
-    '''
-    await discord_logic.attack(ctx)
+@bot.tree.command(name="menu", description="Shows main menu with player's profile and interaction buttons")
+async def menu(interaction: discord.Interaction):
+    await discord_logic.profile(interaction, discord_ui.PlayerMenu(interaction))
 
+@bot.tree.command(name="shop", description="Shows the shop of the current area")
+async def shop(interaction: discord.Interaction):
+    await discord_logic.shop(interaction)
 
-@bot.command()
-async def rest(ctx):
-    """
-    !rest command
-    Fully recovers the player
-    """
-    await discord_logic.rest(ctx)
+@bot.tree.command(name="equipment", description="Shows player's equipment")
+async def equipment(interaction: discord.Interaction):
+    await discord_logic.equipment(interaction)
 
+@bot.tree.command(name="job", description="Shows player's job info and allows changing it")
+async def job(interaction: discord.Interaction):
+    await discord_logic.job(interaction)
 
-@bot.command()
-async def inventory(ctx):
-    """
-    !inventory command
-    Shows player's inventory
-    """
-    await discord_logic.inventory(ctx)
+@bot.tree.command(name="skills", description="Shows player's skills info")
+async def skills(interaction: discord.Interaction):
+    await discord_logic.show_skills(interaction)
 
+@bot.tree.command(name="dungeon", description="Shows all dungeons in current area")
+async def dungeon(interaction: discord.Interaction):
+    await discord_logic.dungeon(interaction)
 
-@bot.command()
-async def profile(ctx):
-    """
-    !profile command
-    Shows player's profile
-    """
-    await discord_logic.profile(ctx, None)
-
-
-@bot.command()
-async def menu(ctx):
-    """
-    !menu command
-    Shows main menu, with player's profile and buttons for interacting (in order to minimize inputting commands)
-    """
-    await discord_logic.profile(ctx, discord_ui.PlayerMenu(ctx))
-
-
-@bot.command()
-async def shop(ctx):
-    """
-    !shop command
-    Shows the shop of the current area
-    """
-    await discord_logic.shop(ctx)
-
-
-@bot.command()
-async def equipment(ctx):
-    """
-    !equipment command
-    Shows player's equipment
-    """
-    await discord_logic.equipment(ctx)
-
-
-@bot.command()
-async def job(ctx):
-    """
-    !job command
-    Shows player's job, also allows to change it
-    """
-    await discord_logic.job(ctx)
-
-
-@bot.command()
-async def skills(ctx):
-    """
-    !skills command
-    Shows player's skills info
-    """
-    await discord_logic.show_skills(ctx)
-
-
-@bot.command()
-async def dungeon(ctx):
-    """
-    !dungeon command
-    Shows all dungeons in current area
-    """
-    await discord_logic.dungeon(ctx)
-
-
-@bot.command()
-async def duel(ctx, enemy_name: str):
-    """
-    !duel command
-    Makes the player fight another player
-    """
-    await discord_logic.duel(ctx, enemy_name.lower())
-
+@bot.tree.command(name="duel", description="Makes the player fight another player")
+async def duel(interaction: discord.Interaction, enemy_name: str):
+    await discord_logic.duel(interaction, enemy_name.lower())
 
 def msgs_to_msg_str(msgs: list) -> str:
-    """
-    Converts a list of messages to a string
-
-    :param msgs: List of messages
-    :return: String containing all messages.
-    """
     return "\n".join(msgs)
 
-# Main program
 if __name__ == "__main__":
     data_management.load_everything()
     bot.run(DISCORD_TOKEN)

@@ -265,11 +265,11 @@ class ItemDestroySelectView(discord.ui.View):
     @discord.ui.button(label="Destroy all items", style=discord.ButtonStyle.red)
     async def menu1(self, interaction: discord.Interaction, button: discord.ui.Button):
         if await check_button_pressed(self.ctx, interaction):
-            no_error, msgs = interface.destroy_all_items_for_essence(self.ctx.author.name)
+            no_error, msgs = interface.destroy_all_items_for_essence(interaction.user.name)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class BlessingBuySelect(discord.ui.Select):
@@ -480,8 +480,8 @@ class SkillSelect(discord.ui.Select):
 
         if await check_button_pressed(self.ctx, interaction):
             skill_inst = data_management.search_cache_skill_by_name(self.values[0])
-            no_error, msgs = interface.skill_attack(self.ctx.author.name, skill_inst.name)
-            await discord_logic.continue_battle(self.ctx, no_error, msgs, ActionMenu(self.ctx))
+            no_error, msgs = interface.skill_attack(interaction.user.name, skill_inst.name)
+            await discord_logic.continue_battle(interaction, no_error, msgs, ActionMenu(interaction))
             await interaction.response.defer()
 
 
@@ -523,11 +523,11 @@ class JobSelect(discord.ui.Select):
         if await check_button_pressed(self.ctx, interaction):
             job = data_management.search_cache_job_by_name(self.values[0])
             # Changes job
-            no_error, msgs = interface.change_player_job(self.ctx.author.name, job.name)
+            no_error, msgs = interface.change_player_job(interaction.user.name, job.name)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class JobSelectView(discord.ui.View):

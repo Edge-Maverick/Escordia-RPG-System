@@ -29,7 +29,7 @@ class ActionMenu(discord.ui.View):
     @discord.ui.button(label="Skill", style=discord.ButtonStyle.primary)
     async def menu2(self, interaction: discord.Interaction, button: discord.ui.Button):
         if await check_button_pressed(self.ctx, interaction):
-            battle = data_management.search_cache_battle_by_player(self.ctx.author.name)
+            battle = data_management.search_cache_battle_by_player(interaction.user.name)
 
             # All of this is to get all player skills that are not in cooldown
             cooldown_str = ""
@@ -40,9 +40,9 @@ class ActionMenu(discord.ui.View):
             for skill in battle.skills_in_cooldown:
                 skill_list.remove(skill)
             if len(skill_list) == 0:
-                await self.ctx.send(f"**Escordia Error** - {self.ctx.author.mention}: You have no skills to use!")
+                await interaction.response.send_message(f"**Escordia Error** - {interaction.user.mention}: You have no skills to use!")
             else:
-                await interaction.response.send_message(f"Please select a skill to perform, {self.ctx.author.mention}.\n"
+                await interaction.response.send_message(f"Please select a skill to perform, {interaction.user.mention}.\n"
                                                         f"Remember you can see information about your skills in `!skills`\n"
                                                         f"{cooldown_str}",
                                                         view=SkillSelectView(self.ctx, skill_list, battle.player.current_job))
@@ -67,8 +67,8 @@ class PlayerMenu(discord.ui.View):
     # Fight
     @discord.ui.button(label=emojis.CROSSED_SWORDS_EMOJI + " Fight", style=discord.ButtonStyle.red)
     async def menu1(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if await check_button_pressed(self.ctx, interaction):
-            await discord_logic.begin_fight(self.ctx, ActionMenu(self.ctx))
+        if await check_button_pressed(interaction, interaction):
+            await discord_logic.begin_fight(interaction, ActionMenu(interaction))
             await interaction.response.defer()
 
     # Dungeon

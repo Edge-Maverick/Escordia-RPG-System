@@ -10,15 +10,14 @@ import info_msgs
 from StringProgressBar import progressBar
 
 
-def embed_help_msg(ctx) -> discord.Embed:
+def embed_help_msg(interaction: discord.Interaction) -> discord.Embed:
     """
-    Sends embed used for !help command
+    Sends embed used for /help command
 
-    :param ctx: Discord CTX
+    :param interaction: Discord Interaction
     :return: Embed
     """
     embed = discord.Embed(
-        # General info
         title=f'Escordia Help',
         description=f'{info_msgs.HELP_MSG}',
         color=discord.Colour.red()

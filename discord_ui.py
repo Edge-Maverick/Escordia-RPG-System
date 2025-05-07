@@ -300,11 +300,11 @@ class BlessingBuySelect(discord.ui.Select):
 
         if await check_button_pressed(self.ctx, interaction):
             # Purchases the blessing
-            no_error, msgs = interface.purchase_blessing(self.ctx.author.name, self.values[0])
+            no_error, msgs = interface.purchase_blessing(interaction.user.name, self.values[0])
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class BlessingBuySelectView(discord.ui.View):
@@ -352,11 +352,11 @@ class EquipmentSelect(discord.ui.Select):
 
         if await check_button_pressed(self.ctx, interaction):
             item = data_management.search_cache_item_by_name(self.values[0])
-            no_error, msgs = interface.equip_item(self.ctx.author.name, item.name)
+            no_error, msgs = interface.equip_item(interaction.user.name, item.name)
             if no_error:
                 await interaction.response.send_message(discord_logic.msgs_to_msg_str(msgs))
             else:
-                await self.ctx.send(f'**Escordia Error** - {self.ctx.author.mention}: {msgs}')
+                await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs}')
 
 
 class EquipmentSelectView(discord.ui.View):

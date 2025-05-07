@@ -51,7 +51,7 @@ class ActionMenu(discord.ui.View):
     @discord.ui.button(label="Inspect enemy", style=discord.ButtonStyle.green)
     async def menu3(self, interaction: discord.Interaction, button: discord.ui.Button):
         if await check_button_pressed(self.ctx, interaction):
-            await interaction.response.send_message(embed=discord_embeds.embed_enemy_info(self.ctx, data_management.search_cache_battle_by_player(self.ctx.author.name).enemy))
+            await interaction.response.send_message(embed=discord_embeds.embed_enemy_info(self.ctx, data_management.search_cache_battle_by_player(interaction.user.name).enemy))
 
 
 class PlayerMenu(discord.ui.View):

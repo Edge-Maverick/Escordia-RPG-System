@@ -232,11 +232,11 @@ async def area(ctx) -> None:
         await ctx.send(f'**Escordia Error** - {ctx.author.mention}: {msgs_to_msg_str(msgs)}')
 
 
-async def profile(ctx, player_menu_ui: discord.ui.View) -> None:
+async def profile(interaction: discord.Interaction, player_menu_ui: discord.ui.View) -> None:
     """
     Shows the player's profile.
 
-    :param ctx: Discord CTX
+    :param interaction: Discord Interaction
     :param player_menu_ui: Player menu UI
     :return: None
     """

@@ -243,11 +243,11 @@ async def profile(ctx, player_menu_ui: discord.ui.View) -> None:
 
     no_error, msgs = interface.show_player_profile(interaction.user.name)
     if no_error:
-        player_inst = data_management.search_cache_player(ctx.author.name)
+        player_inst = data_management.search_cache_player(interaction.user.name)
         job_inst = data_management.search_cache_job_by_name(player_inst.current_job)
-        await ctx.send(embed=discord_embeds.embed_player_profile(ctx, ctx.author.name, player_inst, job_inst), view=player_menu_ui)
+        await interaction.response.send_message(embed=discord_embeds.embed_player_profile(interaction, interaction.user.name, player_inst, job_inst), view=player_menu_ui)
     else:
-        await ctx.send(f'**Escordia Error** - {ctx.author.mention}: {msgs_to_msg_str(msgs)}')
+        await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs_to_msg_str(msgs)}')
 
 
 async def job(ctx) -> None:

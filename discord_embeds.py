@@ -171,11 +171,11 @@ def embed_enemy_info(ctx, enemy_inst: enemy.Enemy) -> discord.Embed:
     return embed
 
 
-def embed_player_profile(ctx, player_name: str, player_inst: player.Player, job_inst: job.Job) -> discord.Embed:
+def embed_player_profile(interaction, player_name: str, player_inst: player.Player, job_inst: job.Job) -> discord.Embed:
     """
     Embed for whenever the player checks their profile.
 
-    :param ctx: Discord's CTX
+    :param interaction: Discord Interaction
     :param player_name: Player's name
     :param player_inst: Player's instance
     :param job_inst: Player's job instance
@@ -196,7 +196,7 @@ def embed_player_profile(ctx, player_name: str, player_inst: player.Player, job_
     embed.add_field(name='Currencies',
                     value=f'{player_inst.money} {emojis.ESC_GOLD_ICON}  {player_inst.essence} {emojis.ESC_ESSENCE_ICON}',
                     inline=True)
-    embed.set_thumbnail(url=ctx.author.avatar.url)
+    embed.set_thumbnail(url=interaction.user.avatar.url)
 
     return embed
 

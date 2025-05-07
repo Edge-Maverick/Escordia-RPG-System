@@ -13,20 +13,20 @@ import battle
 from error_msgs import *
 
 
-async def create_character(ctx) -> None:
+async def create_character(interaction: discord.Interaction) -> None:
     """
     Creates a new character for the player.
 
-    :param ctx: Discord CTX
+    :param interaction: Discord Interaction
     :return: None
     """
 
-    no_error, msgs = interface.create_player(ctx.author.name)
+    no_error, msgs = interface.create_player(interaction.user.name)
     if no_error:
-        await ctx.send(
-            f'Welcome, {ctx.author.mention}, to the world of Escordia.\nWe recommend you see the `!tutorial`.')
+        await interaction.response.send_message(
+            f'Welcome, {interaction.user.mention}, to the world of Escordia.\nWe recommend you use `/tutorial`.')
     else:
-        await ctx.send(f'**Escordia Error** - {ctx.author.mention}: {msgs_to_msg_str(msgs)}')
+        await interaction.response.send_message(f'**Escordia Error** - {interaction.user.mention}: {msgs_to_msg_str(msgs)}')
 
 
 async def begin_fight(ctx, action_menu_ui: discord.ui.View) -> None:
